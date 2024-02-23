@@ -8,21 +8,18 @@ import kass.concurrente.crypto.Cifrar;
  */
 public class Main {
 
+    
+
     public static void main(String[] args) throws Exception {
         Long inicio = System.nanoTime();
-
         //System.out.println(Cifrar.descifraC(Constante.LLAVE, Constante.CONTRASENNA));
         String contr = "";
-
-        for (int i = 1; i <= 13; i++) {
-            genera_palabras(Constante.ALFABETO, i, "");
-        }
-            
-
+        
         Long fin = System.nanoTime();
         Long total = fin-inicio;
         System.out.println("TIEMPO TOTAL: " + nanoSegundoASegundo(total));
         System.out.println("Practica 2");
+        System.exit(0);
     }
 
     public static double nanoSegundoASegundo(Long tiempo){
@@ -34,12 +31,14 @@ public class Main {
             // Generar nuevas combinaciones añadiendo cada letra del alfabeto al prefijo actual
             for (int i = 0; i < alfabeto.length(); i++) {
                 String nuevaCombinacion = prefijo + alfabeto.charAt(i);
+                nuevaCombinacion = (nuevaCombinacion.charAt(0)+"").toUpperCase()+nuevaCombinacion.substring(1);
                 try{
                     if(Cifrar.descifraC(Constante.LLAVE, nuevaCombinacion)){
-                        System.out.println(nuevaCombinacion);    
-                        return;
+                        System.out.println("True klansdlkasndlkn");
+                        System.out.println(nuevaCombinacion);
                     }
                 }catch(Exception e){}
+                System.out.println(nuevaCombinacion); 
                 genera_palabras(alfabeto, longitudMaxima, nuevaCombinacion);
             }
         }

@@ -89,7 +89,6 @@ public class Cifrar {
         byte[] res = cifra(contra);
         //String palabra = byteToString(res);
         //System.out.println("AQUI: " + palabra + " "+ palabraCifrada + " CONTRA: " + contra);//Descomentar en caso de querer hacer pruebas
-        System.out.println(byteToString(res).equals(palabraCifrada));
         return byteToString(res).equals(palabraCifrada);
     }
 }
