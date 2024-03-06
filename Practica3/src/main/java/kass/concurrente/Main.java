@@ -4,6 +4,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
+import kass.concurrente.constantes.Contante;
+import kass.concurrente.modelos.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static kass.concurrente.constantes.Contante.LOGS;
 
 /**
@@ -15,10 +21,24 @@ import static kass.concurrente.constantes.Contante.LOGS;
 public class Main implements Runnable {
 
     Lock lock;
+    List<Thread> hilos;
+    List<Prisionero> prisioneros;
+    Habitacion hab;
+    Vocero vocero;
 
     public Main(){
         lock = new ReentrantLock();
-        //Agregar lo que haga falta para que funcione
+        hilos = new ArrayList<>();
+        prisioneros = new ArrayList<>();
+        hab = new Habitacion();
+        vocero = new Vocero(0,true,false);
+        prisioneros.add(vocero);
+
+        for(Integer i = 0; i < Contante.PRISIONEROS; i++){
+            Prisionero prisionero = new Prisionero(i, false, false);
+            prisioneros.add(prisionero);
+        }
+
     }
 
     /*
@@ -33,16 +53,53 @@ public class Main implements Runnable {
      */
     @Override
     public void run() {
+        System.out.println(hab.getInterruptor());
         // TODO Auto-generated method stub
+        for (Prisionero prisionero : prisioneros) {
+            Thread t = new Thread(() -> {
+                while (true) {
+                    lock.lock();
+                    try {
+                        boolean interruptorEstado = hab.entraHabitacion(prisionero);
+                        if(interruptorEstado == false){
+                            hab.setInterruptor(Contante.LOGS);
+                        }
+                        if (interruptorEstado == true && prisionero.getMarcado() == false) {
+                            synchronized (Main.this) {
+                                vocero.annadir(prisionero);
+                                System.out.println(Contante.RED + "Prisionero " + prisionero.getId() + " ha pasado. (Interruptor encendido)");
+                            }
+                        } else if (prisionero.getMarcado() == true) {
+                            synchronized (Main.this) {
+                                vocero.annadir(prisionero);
+                                System.out.println(Contante.BLUE + "Prisionero " + prisionero.getId() + " ha pasado. (Interruptor apagado)");
+                            }
+                        }
+                        if (vocero.getContador() == prisioneros.size()) {
+                            hab.setInterruptor(false); // Apagar el interruptor
+                            System.out.println("Todos los prisioneros han pasado al menos una vez.");
+                            break;
+                        }
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        lock.unlock();
+                    }
+                }
+            });
+            hilos.add(t);
+            t.start();
+        }
+
         
     }
 
 
     public static void main(String[] args) {
         Main m = new Main();
-
-        final Logger LOG = Logger.getLogger("paquete.NombreClase"); // EJEMPLO LOGGER
-
-        if(LOGS) LOG.info("HOLA SOY UN MENSAJE");
+        Thread simulationThread = new Thread(m);
+        System.out.println("Simulación:\n");
+        simulationThread.start();
     }
 }

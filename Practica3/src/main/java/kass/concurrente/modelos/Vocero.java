@@ -22,7 +22,7 @@ public class Vocero extends Prisionero{
         return contador;
     }
 
-    public void annadir(Integer pris){
+    public void annadir(Prisionero pris){
         contador += 1;
     }
 }

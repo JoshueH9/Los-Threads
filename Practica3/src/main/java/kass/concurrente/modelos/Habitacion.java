@@ -1,5 +1,7 @@
 package kass.concurrente.modelos;
 
+import kass.concurrente.constantes.Contante;
+
 /**
  * Clase que fungira como habitacion
  * Se sabe que existe un interruptor que nos dice
@@ -31,6 +33,21 @@ public class Habitacion {
      * @throws InterruptedException Si falla algun hilo
      */
     public Boolean entraHabitacion(Prisionero prisionero) throws InterruptedException{
-        return null;
+        prisionero.setMarcado(Contante.LOGS);
+        Thread.sleep(Contante.CINCO_SEGUNDOS);
+        return prendido;
+    }
+
+    public void setInterruptor(boolean prendido){
+        this.prendido = prendido;
+    }
+
+    public Boolean getInterruptor(){
+        return prendido;
+    }
+
+
+    public String toString(){
+        return "Interruptor: "+ prendido;
     }
 }
